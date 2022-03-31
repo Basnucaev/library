@@ -20,6 +20,11 @@ public class Book {
     @Column(name = "price")
     private double price;
 
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "file_id")
+    private BookFile file;
+
+
     public Book() {
     }
 
@@ -53,5 +58,13 @@ public class Book {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public BookFile getFile() {
+        return file;
+    }
+
+    public void setFile(BookFile file) {
+        this.file = file;
     }
 }
