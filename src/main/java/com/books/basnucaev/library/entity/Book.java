@@ -1,6 +1,8 @@
 package com.books.basnucaev.library.entity;
 
 import javax.persistence.*;
+import java.io.File;
+import java.util.List;
 
 @Entity
 @Table(name = "book")
@@ -20,12 +22,24 @@ public class Book {
     @Column(name = "price")
     private double price;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "file_id")
-    private BookFile file;
+    @Column(name = "file_path")
+    private String filePath;
 
+    @Column(name = "file_type")
+    private String fileType;
+
+    @Column(name = "download_uri")
+    private String downloadUri;
 
     public Book() {
+    }
+
+    public String getDownloadUri() {
+        return downloadUri;
+    }
+
+    public void setDownloadUri(String downloadUri) {
+        this.downloadUri = downloadUri;
     }
 
     public int getId() {
@@ -60,11 +74,19 @@ public class Book {
         this.price = price;
     }
 
-    public BookFile getFile() {
-        return file;
+    public String getFilePath() {
+        return filePath;
     }
 
-    public void setFile(BookFile file) {
-        this.file = file;
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
+    public String getFileType() {
+        return fileType;
+    }
+
+    public void setFileType(String fileType) {
+        this.fileType = fileType;
     }
 }

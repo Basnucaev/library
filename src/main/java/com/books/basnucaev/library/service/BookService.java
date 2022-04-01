@@ -15,4 +15,6 @@ public interface BookService {
     void deleteBook(int id);
 
     boolean updateBook(Book book);
+
+    Book getBookByTittle(String tittle);
 }

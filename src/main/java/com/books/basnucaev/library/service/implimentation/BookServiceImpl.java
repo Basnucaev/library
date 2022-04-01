@@ -40,10 +40,16 @@ public class BookServiceImpl implements BookService {
     @Override
     public boolean updateBook(Book book) {
         for (Book bookTemp : getAllBooks()) {
-            if (bookTemp.getId() == book.getId())
+            if (bookTemp.getId() == book.getId()) {
                 bookRepository.save(book);
-            return true;
+                return true;
+            }
         }
         return false;
+    }
+
+    @Override
+    public Book getBookByTittle(String tittle) {
+        return bookRepository.findBookByTitle(tittle);
     }
 }

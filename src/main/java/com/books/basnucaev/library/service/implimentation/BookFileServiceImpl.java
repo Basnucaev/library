@@ -1,45 +1,38 @@
 package com.books.basnucaev.library.service.implimentation;
 
-import com.books.basnucaev.library.entity.Book;
-import com.books.basnucaev.library.entity.BookFile;
-import com.books.basnucaev.library.repository.BookFileRepository;
 import com.books.basnucaev.library.service.BookFileService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 
 @Service
 public class BookFileServiceImpl implements BookFileService {
-    private final BookFileRepository bookFileRepository;
-
-    @Autowired
-    public BookFileServiceImpl(BookFileRepository bookFileRepository) {
-        this.bookFileRepository = bookFileRepository;
-    }
+    private final String uploadFolderPath = "C:\\Users\\6\\Desktop\\BooksStorage";
 
     @Override
-    public BookFile getBookFileFromMultipartFile(MultipartFile file) {
-        BookFile bookFile = new BookFile();
+    public void uploadToLocalFolder(MultipartFile file) {
         try {
-            bookFile.setFileData(file.getBytes());
-            bookFile.setFileType(file.getContentType());
-            bookFile.setFileName(file.getOriginalFilename());
-            bookFile.setSize(file.getSize());
+            byte[] data = file.getBytes();
+            Path path = Paths.get(uploadFolderPath + "\\" + file.getOriginalFilename());
+            Files.write(path, data);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
-        return bookFile;
     }
 
     @Override
-    public void addBookFileToDB(BookFile bookFile) {
-        bookFileRepository.save(bookFile);
-    }
-
-    @Override
-    public BookFile downloadBookFile(int id) {
-        return bookFileRepository.findById(id).orElse(null);
+    public byte[] downloadFromLocalPath(String path) {
+        try (FileInputStream fileInputStream = new FileInputStream(path)) {
+            return fileInputStream.readAllBytes();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
     }
 }

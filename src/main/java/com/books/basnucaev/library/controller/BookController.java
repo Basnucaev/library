@@ -38,7 +38,7 @@ public class BookController {
     @PostMapping("/")
     public ResponseEntity<?> addBook(@RequestBody Book book) {
         bookService.addBook(book);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(book, HttpStatus.CREATED);
     }
 
     @PutMapping("/")
