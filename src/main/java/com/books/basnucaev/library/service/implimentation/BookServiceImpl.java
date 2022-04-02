@@ -52,4 +52,19 @@ public class BookServiceImpl implements BookService {
     public Book getBookByTittle(String tittle) {
         return bookRepository.findBookByTitle(tittle);
     }
+
+    @Override
+    public List<Book> getBooksByTittleContains(String tittle) {
+        return bookRepository.findAllByTitleContains(tittle);
+    }
+
+    @Override
+    public List<Book> getBooksByAuthorContains(String author) {
+        return bookRepository.findAllByAuthorContains(author);
+    }
+
+    @Override
+    public List<Book> getBooksByPriceDiapason(int from, int to) {
+        return bookRepository.findAllByPriceBetween(from, to);
+    }
 }

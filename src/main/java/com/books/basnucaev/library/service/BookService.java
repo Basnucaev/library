@@ -17,4 +17,10 @@ public interface BookService {
     boolean updateBook(Book book);
 
     Book getBookByTittle(String tittle);
+
+    List<Book> getBooksByTittleContains(String tittle);
+
+    List<Book> getBooksByAuthorContains(String author);
+
+    List<Book> getBooksByPriceDiapason(int from, int to);
 }
