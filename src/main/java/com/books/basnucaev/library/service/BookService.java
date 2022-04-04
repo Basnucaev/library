@@ -1,6 +1,7 @@
 package com.books.basnucaev.library.service;
 
 import com.books.basnucaev.library.entity.Book;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -8,19 +9,11 @@ public interface BookService {
 
     List<Book> getAllBooks();
 
-    Book getOneBook(int id);
+    Book getBookById(int id);
 
-    void addBook(Book book);
+    boolean addBook(Book book, MultipartFile file);
 
-    void deleteBook(int id);
+    boolean deleteBookById(int id);
 
     boolean updateBook(Book book);
-
-    Book getBookByTittle(String tittle);
-
-    List<Book> getBooksByTittleContains(String tittle);
-
-    List<Book> getBooksByAuthorContains(String author);
-
-    List<Book> getBooksByPriceDiapason(int from, int to);
 }

@@ -1,11 +1,28 @@
 package com.books.basnucaev.library.entity;
 
-import javax.persistence.*;
-import java.io.File;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "book")
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
 public class Book {
 
     @Id
@@ -22,71 +39,16 @@ public class Book {
     @Column(name = "price")
     private double price;
 
-    @Column(name = "file_path")
-    private String filePath;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "book")
+    private List<FileBook> fileBooks = new ArrayList<>();
 
-    @Column(name = "file_type")
-    private String fileType;
-
-    @Column(name = "download_uri")
-    private String downloadUri;
-
-    public Book() {
+    public void addFileBook(FileBook fileBook) {
+        fileBooks.add(fileBook);
+        fileBook.setBook(this);
     }
 
-    public String getDownloadUri() {
-        return downloadUri;
-    }
-
-    public void setDownloadUri(String downloadUri) {
-        this.downloadUri = downloadUri;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public String getFilePath() {
-        return filePath;
-    }
-
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
-    }
-
-    public String getFileType() {
-        return fileType;
-    }
-
-    public void setFileType(String fileType) {
-        this.fileType = fileType;
+    public void removeFileBook(FileBook fileBook) {
+        fileBooks.remove(fileBook);
+        fileBook.setBook(null);
     }
 }
