@@ -42,9 +42,18 @@ public class FileBook {
     @Column(name = "size")
     private long size;
 
+    @Column(name = "download_uri")
+    private String downloadURI;
+
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "book_id")
     @JsonIgnore
     private Book book;
 
+    public FileBook(String fileName, String fileType, String filePath, long size) {
+        this.fileName = fileName;
+        this.fileType = fileType;
+        this.filePath = filePath;
+        this.size = size;
+    }
 }

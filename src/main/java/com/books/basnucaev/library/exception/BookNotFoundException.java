@@ -20,8 +20,4 @@ public class BookNotFoundException extends RuntimeException {
         super(cause);
     }
 
-    @Override
-    public String getMessage() {
-        return super.getMessage();
-    }
 }

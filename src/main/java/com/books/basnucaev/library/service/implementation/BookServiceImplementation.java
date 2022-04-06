@@ -51,36 +51,35 @@ public class BookServiceImplementation implements BookService {
         if (bookFieldsCheck(book)) {
             throw new BookVarsEmptyException("Book vars are empty");
         }
-        if (!fileTypeCheck(file.getContentType())) {
-            throw new NotAcceptableFileFormatException("You can upload only these formats: " +
-                    Arrays.toString(BookFormats.formatsAbbreviation));
-        }
-        FileBook fileBook = fileBookService.uploadFileToLocalFolder(file, book, UPLOAD_FOLDER);
+        FileBook fileBook = fileBookService.uploadFileToLocalFolder(file, book);
         book.addFileBook(fileBook);
         bookRepository.save(book);
+        fileBookService.addDownloadUriToAllFilesBook(book);
+        return true;
+    }
+
+    @Override
+    public boolean updateBook(Book book) {
+        Book toUpdateBook = getBookById(book.getId());
+        if (book.getTitle() != null && !book.getTitle().equals(""))
+            toUpdateBook.setTitle(book.getTitle());
+        if (book.getAuthor() != null && !book.getAuthor().equals(""))
+            toUpdateBook.setAuthor(book.getAuthor());
+        if (book.getPrice() != 0)
+            toUpdateBook.setPrice(book.getPrice());
+        bookRepository.save(toUpdateBook);
         return true;
     }
 
     @Override
     public boolean deleteBookById(int id) {
-        return false;
-    }
-
-    @Override
-    public boolean updateBook(Book book) {
-        return false;
+        Book toDeleteBook = getBookById(id);
+        bookRepository.delete(toDeleteBook);
+        return true;
     }
 
     private boolean bookFieldsCheck(Book book) {
         return book.getTitle().equals("") || book.getAuthor().equals("") || book.getPrice() == 0;
     }
 
-    private boolean fileTypeCheck(String contentType) {
-        for (String type : BookFormats.formats) {
-            if (type.equals(contentType)) {
-                return true;
-            }
-        }
-        return false;
-    }
 }

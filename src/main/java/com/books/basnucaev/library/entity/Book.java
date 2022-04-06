@@ -1,7 +1,6 @@
 package com.books.basnucaev.library.entity;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -22,7 +21,6 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-@NoArgsConstructor
 public class Book {
 
     @Id
@@ -41,6 +39,15 @@ public class Book {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "book")
     private List<FileBook> fileBooks = new ArrayList<>();
+
+    public Book() {
+    }
+
+    public Book(String title, String author, double price) {
+        this.title = title;
+        this.author = author;
+        this.price = price;
+    }
 
     public void addFileBook(FileBook fileBook) {
         fileBooks.add(fileBook);
