@@ -36,7 +36,6 @@ public class FileBookController {
     public ResponseEntity<Book> uploadFileToBookByBookId(@PathVariable int id, @RequestPart("file") MultipartFile file) {
         Book book = bookService.getBookById(id);
         fileBookService.addFileToBookById(book, file);
-        bookService.updateBook(book);
         fileBookService.addDownloadUriToAllFilesBook(book);
         return new ResponseEntity<>(book, HttpStatus.OK);
     }

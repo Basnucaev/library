@@ -6,31 +6,37 @@ import com.books.basnucaev.library.exception.FileBookNotFoundException;
 import com.books.basnucaev.library.exception.FileNotFoundInLocalPathException;
 import com.books.basnucaev.library.exception.NotAcceptableFileFormatException;
 import com.books.basnucaev.library.exception.Response;
+import com.books.basnucaev.library.repository.BookRepository;
 import com.books.basnucaev.library.repository.FileBookRepository;
 import com.books.basnucaev.library.service.BookFormats;
 import com.books.basnucaev.library.service.FileBookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class FileBookServiceImplementation implements FileBookService {
     private final FileBookRepository fileBookRepository;
-    private final String UPLOAD_FOLDER = "C:\\Users\\6\\Desktop\\BooksStorage\\";
+    private final BookRepository bookRepository;
+    private final String FILES_STORAGE;
 
     @Autowired
-    public FileBookServiceImplementation(FileBookRepository fileBookRepository) {
+    public FileBookServiceImplementation(FileBookRepository fileBookRepository, BookRepository bookRepository,
+                                         @Value("${library.books.storage-folder-path}") String files_storage) {
         this.fileBookRepository = fileBookRepository;
+        this.bookRepository = bookRepository;
+        FILES_STORAGE = files_storage;
     }
 
     @Override
@@ -60,21 +66,25 @@ public class FileBookServiceImplementation implements FileBookService {
             throw new NotAcceptableFileFormatException("You can upload only these formats: " +
                     Arrays.toString(BookFormats.formatsAbbreviation));
         }
-        String finalFilePath = UPLOAD_FOLDER + file.getOriginalFilename();
+        String uuid = String.valueOf(UUID.randomUUID());
+        String finalFilePath = FILES_STORAGE + uuid;
         try (FileOutputStream fileOutputStream = new FileOutputStream(finalFilePath)) {
             fileOutputStream.write(file.getBytes());
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
-        return new FileBook(file.getOriginalFilename(), file.getContentType(),
-                finalFilePath, file.getSize());
+        return new FileBook(uuid,
+                file.getContentType(),
+                finalFilePath,
+                file.getSize());
     }
 
     @Override
-    public boolean addFileToBookById(Book book, MultipartFile file) {
+    public void addFileToBookById(Book book, MultipartFile file) {
         FileBook toAddFile = uploadFileToLocalFolder(file, book);
+        fileBookRepository.save(toAddFile);
         book.addFileBook(toAddFile);
-        return true;
+        bookRepository.save(book);
     }
 
     @Override

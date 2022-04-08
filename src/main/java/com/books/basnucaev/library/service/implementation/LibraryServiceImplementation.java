@@ -19,16 +19,16 @@ public class LibraryServiceImplementation implements LibraryService {
 
     @Override
     public List<Book> getBooksByTittleContains(String tittle) {
-        return bookRepository.findAllByTitleContains(tittle);
+        return bookRepository.findAllBooksByTitleContains(tittle);
     }
 
     @Override
     public List<Book> getBooksByAuthorContains(String author) {
-        return bookRepository.findAllByAuthorContains(author);
+        return bookRepository.findAllBooksByAuthorContains(author);
     }
 
     @Override
     public List<Book> getBooksByPriceDiapason(int from, int to) {
-        return bookRepository.findAllByPriceBetween(from, to);
+        return bookRepository.findAllBooksByPriceBetween(from, to);
     }
 }

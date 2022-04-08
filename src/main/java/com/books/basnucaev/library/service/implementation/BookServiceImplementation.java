@@ -4,17 +4,14 @@ import com.books.basnucaev.library.entity.Book;
 import com.books.basnucaev.library.entity.FileBook;
 import com.books.basnucaev.library.exception.BookNotFoundException;
 import com.books.basnucaev.library.exception.BookVarsEmptyException;
-import com.books.basnucaev.library.exception.NotAcceptableFileFormatException;
 import com.books.basnucaev.library.exception.Response;
 import com.books.basnucaev.library.repository.BookRepository;
-import com.books.basnucaev.library.service.BookFormats;
 import com.books.basnucaev.library.service.BookService;
 import com.books.basnucaev.library.service.FileBookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 

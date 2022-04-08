@@ -9,10 +9,10 @@ import java.util.List;
 public interface BookRepository extends JpaRepository<Book, Integer> {
 
     @Query("select b from Book b where b.title like %:title%")
-    List<Book> findAllByTitleContains(String title);
+    List<Book> findAllBooksByTitleContains(String title);
 
     @Query("select b from Book b where b.author like %:author%")
-    List<Book> findAllByAuthorContains(String author);
+    List<Book> findAllBooksByAuthorContains(String author);
 
-    List<Book> findAllByPriceBetween(double from, double to);
+    List<Book> findAllBooksByPriceBetween(double from, double to);
 }

@@ -7,7 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 public interface FileBookService {
     FileBook uploadFileToLocalFolder(MultipartFile file, Book book);
 
-    boolean addFileToBookById(Book book, MultipartFile file);
+    void addFileToBookById(Book book, MultipartFile file);
 
     byte[] downloadFromLocalFolder(FileBook fileBook);
 
