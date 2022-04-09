@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface FileBookRepository extends JpaRepository<FileBook, Integer> {
 
-    List<FileBook> findAllByBookId(int id);
+    List<FileBook> findAllFilesByBookId(int id);
 }

@@ -21,7 +21,6 @@ import javax.persistence.Table;
 @Table(name = "file")
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 public class FileBook {
 
@@ -55,5 +54,17 @@ public class FileBook {
         this.fileType = fileType;
         this.filePath = filePath;
         this.size = size;
+    }
+
+    @Override
+    public String toString() {
+        return "FileBook{" +
+                "id=" + id +
+                ", fileName='" + fileName + '\'' +
+                ", fileType='" + fileType + '\'' +
+                ", filePath='" + filePath + '\'' +
+                ", size=" + size +
+                ", downloadURI='" + downloadURI + '\'' +
+                '}';
     }
 }

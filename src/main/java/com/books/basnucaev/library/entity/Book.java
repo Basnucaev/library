@@ -20,7 +20,6 @@ import java.util.List;
 @Table(name = "book")
 @Getter
 @Setter
-@ToString
 public class Book {
 
     @Id

@@ -51,7 +51,7 @@ public class FileBookServiceImplementation implements FileBookService {
 
     @Override
     public void addDownloadUriToAllFilesBook(Book book) {
-        List<FileBook> fileBooks = fileBookRepository.findAllByBookId(book.getId());
+        List<FileBook> fileBooks = fileBookRepository.findAllFilesByBookId(book.getId());
         for (FileBook fileBook : fileBooks) {
             if (fileBook.getDownloadURI() == null) {
                 fileBook.setDownloadURI(getDownloadUri(fileBook));
