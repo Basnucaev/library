@@ -69,7 +69,7 @@ class BookServiceTest {
     }
 
     @Test
-    void canGetAllBooks() {
+    void shouldCallFindAllMethodFromRepository() {
         // when
         bookService.getAllBooks();
 
@@ -78,7 +78,7 @@ class BookServiceTest {
     }
 
     @Test
-    void canGetBookById() {
+    void shouldGetBookById() {
         // given
         Book book = new Book("title", "author", 1500);
         when(bookRepository.findById(anyInt())).thenReturn(Optional.of(book));
@@ -93,7 +93,7 @@ class BookServiceTest {
     }
 
     @Test
-    void canAddBook() {
+    void shouldAddBook() {
         // given
         Book book = new Book("title", "author", 1500);
         MockMultipartFile file = new MockMultipartFile("file", "hello.txt",
@@ -113,7 +113,7 @@ class BookServiceTest {
     }
 
     @Test
-    void canUpdateBook() {
+    void shouldUpdateBook() {
         // given
         Book book = new Book("title", "author", 1500);
         when(bookRepository.findById(anyInt())).thenReturn(Optional.of(book));
@@ -130,7 +130,7 @@ class BookServiceTest {
     }
 
     @Test
-    void canDeleteBookById() {
+    void shouldDeleteBookById() {
         // given
         Book book = new Book("title", "author", 1500);
         when(bookRepository.findById(anyInt())).thenReturn(Optional.of(book));

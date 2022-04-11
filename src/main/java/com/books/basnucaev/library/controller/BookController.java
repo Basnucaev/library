@@ -32,56 +32,30 @@ public class BookController {
     @GetMapping("/books")
     public ResponseEntity<List<Book>> getAll() {
         List<Book> books = bookService.getAllBooks();
-        return response(books);
+        return new ResponseEntity<>(books, HttpStatus.OK);
     }
 
     @GetMapping("/books/{id}")
     public ResponseEntity<Book> getBookById(@PathVariable(name = "id") int id) {
         Book book = bookService.getBookById(id);
-        return response(book);
+        return new ResponseEntity<>(book, HttpStatus.OK);
     }
 
     @PostMapping("/books")
     public ResponseEntity<?> addBook(@RequestPart("book") Book book,
                                      @RequestPart("file") MultipartFile file) {
-        return response(bookService.addBook(book, file), book, HttpStatus.CREATED);
+        bookService.addBook(book, file);
+        return new ResponseEntity<>(book, HttpStatus.CREATED);
     }
 
     @PutMapping("/books")
     public ResponseEntity<Book> updateBook(@RequestBody Book book) {
-        return response(bookService.updateBook(book), book, HttpStatus.OK);
+        bookService.updateBook(book);
+        return new ResponseEntity<>(book, HttpStatus.OK);
     }
 
     @DeleteMapping("/books/{id}")
     public ResponseEntity<?> deleteBook(@PathVariable int id) {
-        return response(bookService.deleteBookById(id), "Book with id= " + id + " was deleted");
-    }
-
-    private ResponseEntity<List<Book>> response(List<Book> books) {
-        if (books.isEmpty()) {
-            return new ResponseEntity<>(books, HttpStatus.NOT_FOUND);
-        } else {
-            return new ResponseEntity<>(books, HttpStatus.OK);
-        }
-    }
-
-    private ResponseEntity<Book> response(Book book) {
-        if (book == null) {
-            return new ResponseEntity<>(book, HttpStatus.NOT_FOUND);
-        } else {
-            return new ResponseEntity<>(book, HttpStatus.OK);
-        }
-    }
-
-    private ResponseEntity<Book> response(boolean value, Book book, HttpStatus httpStatus) {
-        if (value) {
-            return new ResponseEntity<>(book, httpStatus);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
-        }
-    }
-
-    private ResponseEntity<?> response(boolean value, Object object) {
-        return new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+        return new ResponseEntity<>("Book with id= " + id + " was deleted", HttpStatus.OK);
     }
 }

@@ -10,11 +10,11 @@ import com.books.basnucaev.library.repository.BookRepository;
 import com.books.basnucaev.library.repository.FileBookRepository;
 import com.books.basnucaev.library.service.BookFormats;
 import com.books.basnucaev.library.service.FileBookService;
+import com.books.basnucaev.library.service.Helper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,13 +30,17 @@ public class FileBookServiceImplementation implements FileBookService {
     private final FileBookRepository fileBookRepository;
     private final BookRepository bookRepository;
     private final String FILES_STORAGE;
+    private final Helper helper;
 
     @Autowired
-    public FileBookServiceImplementation(FileBookRepository fileBookRepository, BookRepository bookRepository,
-                                         @Value("${library.books.storage-folder-path}") String files_storage) {
+    public FileBookServiceImplementation(FileBookRepository fileBookRepository,
+                                         BookRepository bookRepository,
+                                         @Value("${library.books.storage-folder-path}") String files_storage,
+                                         Helper helper) {
         this.fileBookRepository = fileBookRepository;
         this.bookRepository = bookRepository;
         FILES_STORAGE = files_storage;
+        this.helper = helper;
     }
 
     @Override
@@ -54,7 +58,7 @@ public class FileBookServiceImplementation implements FileBookService {
         List<FileBook> fileBooks = fileBookRepository.findAllFilesByBookId(book.getId());
         for (FileBook fileBook : fileBooks) {
             if (fileBook.getDownloadURI() == null) {
-                fileBook.setDownloadURI(getDownloadUri(fileBook));
+                fileBook.setDownloadURI(helper.getDownloadUri(fileBook));
                 fileBookRepository.save(fileBook);
             }
         }
@@ -89,13 +93,15 @@ public class FileBookServiceImplementation implements FileBookService {
 
     @Override
     public byte[] downloadFromLocalFolder(FileBook fileBook) {
-        File file = new File(fileBook.getFilePath());
-        try (FileInputStream fileInputStream = new FileInputStream(file)) {
-            if (file.exists()) {
-                return fileInputStream.readAllBytes();
+        if (fileBook.getFilePath() != null) {
+            File file = new File(fileBook.getFilePath());
+            try (FileInputStream fileInputStream = new FileInputStream(file)) {
+                if (file.exists()) {
+                    return fileInputStream.readAllBytes();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
         throw new FileNotFoundInLocalPathException("File does not exist");
     }
@@ -107,12 +113,5 @@ public class FileBookServiceImplementation implements FileBookService {
             }
         }
         return false;
-    }
-
-    private String getDownloadUri(FileBook fileBook) {
-        return ServletUriComponentsBuilder.fromCurrentContextPath().
-                path("/api/books/download/").
-                path(String.valueOf(fileBook.getId())).
-                toUriString();
     }
 }

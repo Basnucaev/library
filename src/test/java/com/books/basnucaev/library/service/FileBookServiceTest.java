@@ -2,31 +2,26 @@ package com.books.basnucaev.library.service;
 
 import com.books.basnucaev.library.entity.Book;
 import com.books.basnucaev.library.entity.FileBook;
-import com.books.basnucaev.library.exception.BookNotFoundException;
+import com.books.basnucaev.library.exception.FileBookNotFoundException;
+import com.books.basnucaev.library.exception.FileNotFoundInLocalPathException;
+import com.books.basnucaev.library.exception.NotAcceptableFileFormatException;
 import com.books.basnucaev.library.exception.Response;
 import com.books.basnucaev.library.repository.BookRepository;
 import com.books.basnucaev.library.repository.FileBookRepository;
 import com.books.basnucaev.library.service.implementation.FileBookServiceImplementation;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -43,10 +38,12 @@ class FileBookServiceTest {
     private BookRepository bookRepository;
     @Mock
     private FileBookRepository fileBookRepository;
+    @Mock
+    private Helper helper;
 
     @BeforeEach
     void setUp() {
-        fileBookService = new FileBookServiceImplementation(fileBookRepository, bookRepository, FILES_STORAGE);
+        fileBookService = new FileBookServiceImplementation(fileBookRepository, bookRepository, FILES_STORAGE, helper);
     }
 
     @Test
@@ -59,7 +56,7 @@ class FileBookServiceTest {
 
         // then
         assertThatThrownBy(() -> fileBookService.getFileById(id)).
-                isInstanceOf(BookNotFoundException.class).
+                isInstanceOf(FileBookNotFoundException.class).
                 hasMessageContaining(Response.NOT_FOUND_BY_ID.getId(id));
     }
 
@@ -70,15 +67,25 @@ class FileBookServiceTest {
         // when
 
         // then
+        assertThatThrownBy(() -> fileBookService.downloadFromLocalFolder(new FileBook())).
+                isInstanceOf(FileNotFoundInLocalPathException.class).
+                hasMessageContaining("File does not exist");
     }
 
     @Test
     void shouldThrowExceptionWhenTryToUploadNotAllowedType() {
         // given
+        Book book = new Book("title", "author", 1500);
+        MockMultipartFile file = new MockMultipartFile("file", "hello.txt",
+                MediaType.IMAGE_GIF_VALUE, "Hello world".getBytes());
 
         // when
 
         // then
+        assertThatThrownBy(() -> fileBookService.uploadFileToLocalFolder(file, book)).
+                isInstanceOf(NotAcceptableFileFormatException.class).
+                hasMessageContaining("You can upload only these formats: " +
+                        Arrays.toString(BookFormats.formatsAbbreviation));
     }
 
     @Test
@@ -159,22 +166,19 @@ class FileBookServiceTest {
     }
 
     @Test
-    @Disabled
     void addDownloadUriToAllFilesBook() {
         // given
-        MockHttpServletRequest request = mock(MockHttpServletRequest.class);
+        String uuid = String.valueOf(UUID.randomUUID());
+        String uuid2 = String.valueOf(UUID.randomUUID());
         Book book = new Book("title", "author", 1500);
 
-        List<FileBook> fileBooks = new ArrayList<>();
-        String uuid = String.valueOf(UUID.randomUUID());
-        fileBooks.add(new FileBook(uuid, "pdf", FILES_STORAGE + uuid, 10000));
-        String uuid2 = String.valueOf(UUID.randomUUID());
-        fileBooks.add(new FileBook(uuid2, "docx", FILES_STORAGE + uuid, 5000));
+        List<FileBook> fileBooks = List.of(new FileBook(uuid, "pdf", FILES_STORAGE + uuid, 10000),
+                new FileBook(uuid2, "docx", FILES_STORAGE + uuid, 5000));
 
         book.setFileBooks(fileBooks);
 
         when(fileBookRepository.findAllFilesByBookId(anyInt())).thenReturn(fileBooks);
-        when(request.getContextPath()).thenReturn("http://localhost:8090/");
+        when(helper.getDownloadUri(any(FileBook.class))).thenReturn("/api/books/download/");
 
         // when
         fileBookService.addDownloadUriToAllFilesBook(book);

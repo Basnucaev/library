@@ -11,9 +11,9 @@ public interface BookService {
 
     Book getBookById(int id);
 
-    boolean addBook(Book book, MultipartFile file);
+    void addBook(Book book, MultipartFile file);
 
     boolean deleteBookById(int id);
 
-    boolean updateBook(Book book);
+    void updateBook(Book book);
 }

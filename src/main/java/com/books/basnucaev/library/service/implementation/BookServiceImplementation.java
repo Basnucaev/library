@@ -44,7 +44,7 @@ public class BookServiceImplementation implements BookService {
     }
 
     @Override
-    public boolean addBook(Book book, MultipartFile file) {
+    public void addBook(Book book, MultipartFile file) {
         if (bookFieldsCheck(book)) {
             throw new BookVarsEmptyException("Book vars are empty");
         }
@@ -52,11 +52,10 @@ public class BookServiceImplementation implements BookService {
         book.addFileBook(fileBook);
         bookRepository.save(book);
         fileBookService.addDownloadUriToAllFilesBook(book);
-        return true;
     }
 
     @Override
-    public boolean updateBook(Book book) {
+    public void updateBook(Book book) {
         Book toUpdateBook = getBookById(book.getId());
         if (book.getTitle() != null && !book.getTitle().equals(""))
             toUpdateBook.setTitle(book.getTitle());
@@ -65,7 +64,6 @@ public class BookServiceImplementation implements BookService {
         if (book.getPrice() != 0)
             toUpdateBook.setPrice(book.getPrice());
         bookRepository.save(toUpdateBook);
-        return true;
     }
 
     @Override
@@ -78,5 +76,4 @@ public class BookServiceImplementation implements BookService {
     private boolean bookFieldsCheck(Book book) {
         return book.getTitle().equals("") || book.getAuthor().equals("") || book.getPrice() == 0;
     }
-
 }
